@@ -3,7 +3,7 @@ import VaporSQLite
 
 let drop = Droplet()
 try drop.addProvider(VaporSQLite.Provider.self)
-drop.preparations.append(Acronyms.self)
+drop.preparations.append(Acronym.self)
 
 
 
@@ -17,44 +17,44 @@ drop.get("hello"){request in
 
 
 drop.get("model"){request in
-    let acronym = Acronyms.init(short: "GB", long: "Gareth Bale")
+    let acronym = Acronym.init(short: "GB", long: "Gareth Bale")
     return try acronym.makeJSON()
 }
 
 drop.get("test"){request in
-    var acronym = Acronyms.init(short: "SA", long: "Sergio Aguero")
+    var acronym = Acronym.init(short: "SA", long: "Sergio Aguero")
     try acronym.save()
-    return try JSON(node: Acronyms.all().makeNode())
+    return try JSON(node: Acronym.all().makeNode())
 }
 drop.post("create"){request in
-    var acronym = try Acronyms(node:request.json)
+    var acronym = try Acronym(node:request.json)
     try acronym.save()
     return acronym
 }
 
 
 drop.get("all"){request in
-    return try JSON(node:Acronyms.all())
+    return try JSON(node:Acronym.all())
 }
 
 drop.get("search"){request in
-    return try JSON(node:Acronyms.query().first()?.makeNode())
+    return try JSON(node:Acronym.query().first()?.makeNode())
     
 }
 
 drop.get("pablo"){request in
-    return try JSON(node:Acronyms.query().filter("short",.notEquals,"SA").all())
+    return try JSON(node:Acronym.query().filter("short",.notEquals,"SA").all())
     
 }
 
 drop.get("update"){request in
-    guard var first = try Acronyms.query().first(),
+    guard var first = try Acronym.query().first(),
         var long = request.data["long"]?.string else{
         throw Abort.badRequest
     }
     first.long = long
     try first.save()
-    return try JSON(node:Acronyms.all())
+    return try JSON(node:Acronym.all())
 }
 
 drop.resource("posts", PostController())
